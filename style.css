@@ -1,76 +1,96 @@
 
-
-body{
-
-background-color: rgb(0, 0, 0);
-
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Vazirmatn', sans-serif;
 }
 
-.continer{
-
-   background-color: white;
-    max-width: 20rem;
-    margin: auto;
-    text-align: center;
-    margin-top: 5rem;
-    border-radius: 8px;
-    box-shadow: 10px 10px 20px 1px #ffffff72;
-    padding: 1rem 1rem;
-
-}
-.divGoal{
-
-    background-color: black;
-    height: 15rem;
-    border-radius: 8px;
-    overflow: auto;
-    box-shadow: 10px 10px 20px 1px #00000072;
-    padding: 1rem;
-
+body {
+  background: linear-gradient(to right, #2c3e50, #3498db);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
+.quiz-container {
+  width: 90%;
+  max-width: 600px;
+  background-color: #1e1e2f;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
 
- .Text {
-  background-color: blue;
-  height: 3rem;
-  max-width: 17rem;
-  margin: auto;
-  margin-top: 1rem;
-  border-radius: 6px 6px 20px 6px;
+.quiz-title {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.question {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.options {
+  list-style: none;
+}
+
+.options li {
+  background-color: #34495e;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.options li:hover {
+  background-color: #3c6382;
+}
+
+.options li.correct {
+  background-color: #2ecc71 !important;
+}
+
+.options li.incorrect {
+  background-color: #e74c3c !important;
+}
+
+.quiz-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.timer {
+  font-size: 18px;
+}
+
+.next-btn, .restart-btn {
+  padding: 10px 20px;
+  border: none;
+  background-color: #2980b9;
   color: white;
   font-weight: bold;
+  border-radius: 5px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  position: relative;
-  direction: rtl;
+  transition: background 0.3s;
 }
 
-.icon-wrapper {
-  position: absolute;
-  left: 0.5rem; /* فاصله از چپ دیو */
-  display: flex;
-  align-items: center;
-  height: 100%;
+.next-btn:hover, .restart-btn:hover {
+  background-color: #1abc9c;
 }
 
-.text-content {
-  flex: 1;
+.result-box {
   text-align: center;
 }
 
-
-
-.in{
-
-padding: 0.4rem;
-    border: none;
-    background-color: black;
-    height: 1.5rem;
-    width: 15rem;
-    border-radius: 5px 5px 15px 5px;
-    color: white;
-    font-family: math;
-    font-weight: 800;
-
+.hidden {
+  display: none;
 }
+

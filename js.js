@@ -1,39 +1,187 @@
 
-let divText = document.getElementById("divText");
-let input = document.getElementById("input");
 
-// بار اول صفحه، اطلاعات قبلی رو لود می‌کنیم
-divText.innerHTML = localStorage.getItem("seting") || "";
-
-// وقتی Enter رو بزنی، یه آیتم اضافه میشه
-input.addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    let value = input.value.trim();
-    if (value === "") return;
-
-    divText.innerHTML += `
-      <div class="Text">
-        <div class="icon-wrapper">
-          <svg class="trash-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="24" height="24" style="fill: white; cursor: pointer;">
-            <path d="M232.7 69.9L224 96L128 96C110.3 96 96 110.3 96 128C96 145.7 110.3 160 128 160L512 160C529.7 160 544 145.7 544 128C544 110.3 529.7 96 512 96L416 96L407.3 69.9C402.9 56.8 390.7 48 376.9 48L263.1 48C249.3 48 237.1 56.8 232.7 69.9zM512 208L128 208L149.1 531.1C150.7 556.4 171.7 576 197 576L443 576C468.3 576 489.3 556.4 490.9 531.1L512 208z"/>
-          </svg>
-        </div>
-        <div class="text-content">${value}</div>
-      </div>
-    `;
-
-    localStorage.setItem("seting", divText.innerHTML);
-    input.value = "";
+const questions = [
+  {
+    question: "کدام زبان برنامه‌نویسی نیست؟",
+    options: ["HTML", "CSS", "Bootstrap", "JavaScript"],
+    answer: 2,
+    level: "easy"
+  },
+  {
+    question: "جاوااسکریپت در چه سالی ساخته شد؟",
+    options: ["1995", "1998", "2000", "2005"],
+    answer: 0,
+    level: "easy"
+  },
+  {
+    question: "DOM مخفف چیست؟",
+    options: ["Document Object Model", "Data Object Method", "Do Or Make", "Driver Of Model"],
+    answer: 0,
+    level: "medium"
+  },
+  {
+    question: "کدام زبان فقط در فرانت‌اند استفاده می‌شود؟",
+    options: ["Python", "HTML", "PHP", "Java"],
+    answer: 1,
+    level: "easy"
+  },
+  {
+    question: "کدام زبان در Node.js استفاده می‌شود؟",
+    options: ["PHP", "C#", "JavaScript", "Ruby"],
+    answer: 2,
+    level: "medium"
+  },
+  {
+    question: "کدام فریم‌ورک برای ساخت رابط کاربری است؟",
+    options: ["Laravel", "React", "Django", "Flask"],
+    answer: 1,
+    level: "medium"
+  },
+  {
+    question: "در جاوااسکریپت typeof null چیست؟",
+    options: ["null", "object", "undefined", "number"],
+    answer: 1,
+    level: "hard"
+  },
+  {
+    question: "کدام یک زبان strongly typed است؟",
+    options: ["JavaScript", "Python", "C++", "PHP"],
+    answer: 2,
+    level: "medium"
+  },
+  {
+    question: "کدام دستور برای حلقه در جاوااسکریپت درست است؟",
+    options: ["loop()", "for()", "foreach()", "repeat()"],
+    answer: 1,
+    level: "easy"
+  },
+  {
+    question: "کدامیک کتابخانه جاوااسکریپت است؟",
+    options: ["React", "Laravel", "Vue", "Both React & Vue"],
+    answer: 3,
+    level: "easy"
+  },
+  {
+    question: "تابع ()setTimeout چه کاری انجام می‌دهد؟",
+    options: [
+      "یک تابع را با تاخیر اجرا می‌کند",
+      "یک تایمر می‌سازد",
+      "حلقه اجرا می‌کند",
+      "هیچکدام"
+    ],
+    answer: 0,
+    level: "medium"
+  },
+  {
+    question: "در CSS کدام خاصیت رنگ متن را تغییر می‌دهد؟",
+    options: ["color", "background", "font-color", "text"],
+    answer: 0,
+    level: "easy"
+  },
+  {
+    question: "کدام مورد نوع داده نیست؟",
+    options: ["Boolean", "Integer", "Function", "Expression"],
+    answer: 3,
+    level: "medium"
+  },
+  {
+    question: "مفهوم Hoisting چیست؟",
+    options: [
+      "افزایش سرعت کد",
+      "بالا بردن متغیرها در اجرا",
+      "کاهش پیچیدگی",
+      "فراخوانی async"
+    ],
+    answer: 1,
+    level: "hard"
+  },
+  {
+    question: "کدام زبان به صورت مفسری اجرا می‌شود؟",
+    options: ["C++", "Java", "Python", "Assembly"],
+    answer: 2,
+    level: "medium"
   }
-});
+];
 
-// حذف آیتمی که روش کلیک شد
-divText.addEventListener("click", function(e) {
-  if (e.target.closest(".trash-icon")) {
-    const item = e.target.closest(".Text");
-    if (item) {
-      item.remove();
-      localStorage.setItem("seting", divText.innerHTML);
+
+const questionEl = document.getElementById("quiz-question");
+const optionsEl = document.getElementById("quiz-options");
+const timerEl = document.getElementById("timer");
+const nextBtn = document.getElementById("next-btn");
+const resultBox = document.getElementById("result-box");
+const scoreText = document.getElementById("score-text");
+
+let currentQuestion = 0;
+let score = 0;
+let timer;
+let timeLeft = 20;
+
+function startTimer() {
+  clearInterval(timer);
+  timeLeft = 20;
+  timerEl.textContent = `زمان: ${timeLeft}`;
+  timer = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = `زمان: ${timeLeft}`;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      lockOptions();
     }
+  }, 1000);
+}
+
+function loadQuestion() {
+  const q = questions[currentQuestion];
+  questionEl.textContent = q.question;
+  optionsEl.innerHTML = "";
+  q.options.forEach((opt, idx) => {
+    const li = document.createElement("li");
+    li.textContent = opt;
+    li.onclick = () => selectOption(li, idx);
+    optionsEl.appendChild(li);
+  });
+  startTimer();
+}
+
+function selectOption(selected, index) {
+  const q = questions[currentQuestion];
+  const allOptions = optionsEl.querySelectorAll("li");
+  allOptions.forEach(opt => opt.onclick = null);
+  if (index === q.answer) {
+    selected.classList.add("correct");
+    score++;
+  } else {
+    selected.classList.add("incorrect");
+    allOptions[q.answer].classList.add("correct");
+  }
+  clearInterval(timer);
+}
+
+function lockOptions() {
+  const q = questions[currentQuestion];
+  const allOptions = optionsEl.querySelectorAll("li");
+  allOptions.forEach((opt, idx) => {
+    opt.onclick = null;
+    if (idx === q.answer) {
+      opt.classList.add("correct");
+    }
+  });
+}
+
+nextBtn.addEventListener("click", () => {
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    loadQuestion();
+  } else {
+    showResult();
   }
 });
+
+function showResult() {
+  document.querySelector(".quiz-box").classList.add("hidden");
+  resultBox.classList.remove("hidden");
+  scoreText.textContent = `نمره شما: ${score} از ${questions.length}`;
+}
+ 
+loadQuestion();
+
